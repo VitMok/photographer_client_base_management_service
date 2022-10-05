@@ -1,13 +1,11 @@
+## Running Development Servers
+```
+$ docker compose up
+```
+
 ## Setup
 ```
-$ pip install -r requirements.txt
-$ python manage.py makemigrations
-$ python manage.py migrate
-$ python manage.py createsuperuser
-```
-
-## Running Development Server
-
-```
-$ python manage.py runserver
+$ docker compose exec web python manage.py makemigrations
+$ docker compose exec web python manage.py migrate
+$ docker compose exec web python manage.py createsuperuser
 ```
