@@ -1,0 +1,49 @@
+version: '3.9'
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: photographers_clients_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Vitaskarate18
+  redis:
+    image: redis
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+      - redis
+  celery:
+    build: .
+    command: celery -A photographer_client_base_management_service worker -l info
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+      - redis
+      - web
+  flower:
+    build: .
+    command: celery -A photographer_client_base_management_service flower
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+      - redis
+      - web
+      - celery
